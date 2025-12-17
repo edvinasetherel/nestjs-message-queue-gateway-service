@@ -1,17 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { InMemoryMessageQueueGateway } from "@/adapters/driven/in-memory-message-queue-gateway.js";
 import { CompositeMessageQueueGateway } from "@/adapters/driven/composite-message-queue-gateway.js";
-import InMemoryQueueProvider from "@/adapters/driven/in-memory-queue-provider.js";
+import InMemoryMessageQueueProvider from "@/adapters/driven/in-memory-message-queue-provider.js";
 
 describe("InMemoryMessageQueueGateway", () =>
 {
     let queueGateway: CompositeMessageQueueGateway;
-    let providers: InMemoryQueueProvider[];
+    let providers: InMemoryMessageQueueProvider[];
     beforeEach(() =>
     {
         providers = [
-            new InMemoryQueueProvider(),
-            new InMemoryQueueProvider(),
+            new InMemoryMessageQueueProvider(),
+            new InMemoryMessageQueueProvider(),
         ];
         queueGateway = new CompositeMessageQueueGateway(providers);
     });

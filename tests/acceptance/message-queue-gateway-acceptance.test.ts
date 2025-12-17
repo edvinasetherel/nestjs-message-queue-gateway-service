@@ -6,7 +6,8 @@ import { App } from "supertest/types.js";
 import { AppController } from "@/adapters/driving/app.controller.js";
 import { MessageQueueService } from "@/app/services/message-queue.service.js";
 import { MESSAGE_QUEUE_GATEWAY } from "@/app/ports/driven/message-queue-gateway.js";
-import { InMemoryMessageQueueGateway } from "@/adapters/driven/in-memory-message-queue-gateway.js";
+import { CompositeMessageQueueGateway } from "@/adapters/driven/composite-message-queue-gateway.js";
+import InMemoryMessageQueueProvider from "@/adapters/driven/in-memory-message-queue-provider.js";
 
 describe("When the application publishes a message", () =>
 {
@@ -20,7 +21,9 @@ describe("When the application publishes a message", () =>
                 MessageQueueService,
                 {
                     provide: MESSAGE_QUEUE_GATEWAY,
-                    useClass: InMemoryMessageQueueGateway,
+                    useValue: new CompositeMessageQueueGateway([
+                        new InMemoryMessageQueueProvider(),
+                    ]),
                 },
             ],
         }).compile();

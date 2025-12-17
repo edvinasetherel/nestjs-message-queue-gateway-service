@@ -1,6 +1,6 @@
 import { MessageQueueProvider } from "@/adapters/driven/message-queue-provider.js";
 
-export default class InMemoryQueueProvider
+export default class InMemoryMessageQueueProvider
 implements MessageQueueProvider
 {
     private readonly __queue: string[];

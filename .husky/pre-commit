@@ -1,1 +1,2 @@
-npm test
+npm test:unit
+npm test:acceptance

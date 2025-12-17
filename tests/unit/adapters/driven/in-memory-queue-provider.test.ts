@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import InMemoryQueueProvider from "@/adapters/driven/in-memory-queue-provider.js";
+import InMemoryMessageQueueProvider from "@/adapters/driven/in-memory-message-queue-provider.js";
 
 describe("InMemoryQueueProvider", () =>
 {
-    let queueProvider: InMemoryQueueProvider;
+    let queueProvider: InMemoryMessageQueueProvider;
     beforeEach(() =>
     {
-        queueProvider = new InMemoryQueueProvider();
+        queueProvider = new InMemoryMessageQueueProvider();
     });
     it("should allow to publish a message to the queue", async () =>
     {
