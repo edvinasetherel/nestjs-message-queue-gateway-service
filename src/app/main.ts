@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { Logger } from "@nestjs/common";
-import { AppModule } from "@/app/app.module.js";
+import { AppModule } from "#app/app.module.js";
 
 const logger = new Logger("Bootstrap");
 

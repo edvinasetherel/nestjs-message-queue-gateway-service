@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { InMemoryMessageQueueGateway } from "@/adapters/driven/in-memory-message-queue-gateway.js";
+import { InMemoryMessageQueueGateway } from "#adapters/driven/in-memory-message-queue-gateway.js";
 
 describe("InMemoryMessageQueueGateway", () =>
 {

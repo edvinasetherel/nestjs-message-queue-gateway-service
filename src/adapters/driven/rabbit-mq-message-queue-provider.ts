@@ -1,5 +1,5 @@
 import amqplib from "amqplib";
-import { MessageQueueProvider } from "@/adapters/driven/message-queue-provider.js";
+import { MessageQueueProvider } from "#adapters/driven/message-queue-provider.js";
 
 export class RabbitMqProvider implements MessageQueueProvider
 {

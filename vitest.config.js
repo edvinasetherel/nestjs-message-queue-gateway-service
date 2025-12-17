@@ -1,4 +1,3 @@
-import swc from "unplugin-swc";
 import { defineConfig } from "vitest/config";
 import { fileURLToPath } from "node:url";
 import { URL } from "url";
@@ -8,15 +7,11 @@ export default defineConfig({
         globals: true,
         root: "./",
     },
-    plugins: [
-        swc.vite({
-            module: { type: "es6" },
-        }),
-    ],
     resolve: {
         alias: {
-            "@": fileURLToPath(new URL("./src", import.meta.url)),
-            "@tests": fileURLToPath(new URL("./tests", import.meta.url)),
+            "#app": fileURLToPath(new URL("./src/app", import.meta.url)),
+            "#tests": fileURLToPath(new URL("./tests", import.meta.url)),
+            "#adapters": fileURLToPath(new URL("./src/adapters", import.meta.url)),
         },
     },
 });

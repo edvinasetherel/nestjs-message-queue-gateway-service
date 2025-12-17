@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { MessageQueueGateway } from "@/app/ports/driven/message-queue-gateway.js";
-import { MESSAGE_QUEUE_GATEWAY } from "@/app/ports/driven/message-queue-gateway.js";
+import type { MessageQueueGateway } from "#app/ports/driven/message-queue-gateway.js";
+import { MESSAGE_QUEUE_GATEWAY } from "#app/ports/driven/message-queue-gateway.js";
 
 @Injectable()
 export class MessageQueueService
@@ -10,8 +10,8 @@ export class MessageQueueService
         private readonly gateway: MessageQueueGateway,
     ) {}
 
-    async publish(messageDto: string)
+    async publish(message: string)
     {
-        await this.gateway.publish(messageDto);
+        await this.gateway.publish(message);
     }
 }

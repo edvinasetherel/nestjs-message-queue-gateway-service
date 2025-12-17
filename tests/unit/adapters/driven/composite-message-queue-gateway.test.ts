@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { CompositeMessageQueueGateway } from "@/adapters/driven/composite-message-queue-gateway.js";
-import InMemoryMessageQueueProvider from "@/adapters/driven/in-memory-message-queue-provider.js";
+import { CompositeMessageQueueGateway } from "#adapters/driven/composite-message-queue-gateway.js";
+import InMemoryMessageQueueProvider from "#adapters/driven/in-memory-message-queue-provider.js";
 
 describe("InMemoryMessageQueueGateway", () =>
 {

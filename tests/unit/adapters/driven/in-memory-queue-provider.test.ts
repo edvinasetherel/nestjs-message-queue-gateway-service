@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import InMemoryMessageQueueProvider from "@/adapters/driven/in-memory-message-queue-provider.js";
+import InMemoryMessageQueueProvider from "#adapters/driven/in-memory-message-queue-provider.js";
 
 describe("InMemoryQueueProvider", () =>
 {

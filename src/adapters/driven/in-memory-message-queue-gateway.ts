@@ -1,4 +1,4 @@
-import { MessageQueueGateway } from "@/app/ports/driven/message-queue-gateway.js";
+import { MessageQueueGateway } from "#app/ports/driven/message-queue-gateway.js";
 
 export class InMemoryMessageQueueGateway
 implements MessageQueueGateway
