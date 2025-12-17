@@ -3,10 +3,10 @@ import { Test } from "@nestjs/testing";
 import request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { App } from "supertest/types.js";
-import { AppController } from "@/app.controller.js";
-import { MessageQueueService } from "@/message-queue.service.js";
-import { IMESSAGE_QUEUE_GATEWAY } from "@/ports/driven/IMessageQueueGateway.js";
-import { InMemoryMessageQueueGateway } from "@/adapters/driven/InMemoryMessageQueueGateway.js";
+import { AppController } from "@/adapters/driving/app.controller.js";
+import { MessageQueueService } from "@/app/services/message-queue.service.js";
+import { MESSAGE_QUEUE_GATEWAY } from "@/app/ports/driven/message-queue-gateway.js";
+import { InMemoryMessageQueueGateway } from "@/adapters/driven/in-memory-message-queue-gateway.js";
 
 describe("When the application publishes a message", () =>
 {
@@ -19,7 +19,7 @@ describe("When the application publishes a message", () =>
             providers: [
                 MessageQueueService,
                 {
-                    provide: IMESSAGE_QUEUE_GATEWAY,
+                    provide: MESSAGE_QUEUE_GATEWAY,
                     useClass: InMemoryMessageQueueGateway,
                 },
             ],

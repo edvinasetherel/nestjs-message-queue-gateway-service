@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "@/app.controller.js";
-import { MessageQueueService } from "@/message-queue.service.js";
+import { AppController } from "@/adapters/driving/app.controller.js";
+import { MessageQueueService } from "@/app/services/message-queue.service.js";
 
 @Module({
     imports: [],

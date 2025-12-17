@@ -1,9 +1,9 @@
-import { IMessageQueueProvider } from "./IMessageQueueProvider";
+import { MessageQueueProvider } from "./message-queue-provider.js";
 
-export class CompositeMessageQueueGateway
+export class CompositeMessageQueueGateway implements MessageQueueProvider
 {
     constructor(
-        private readonly providers: IMessageQueueProvider[],
+        private readonly providers: MessageQueueProvider[],
     )
     {}
 

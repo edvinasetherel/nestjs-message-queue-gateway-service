@@ -1,4 +1,4 @@
-export interface IMessageQueueProvider
+export interface MessageQueueProvider
 {
     publish(message: string): Promise<void>;
 }

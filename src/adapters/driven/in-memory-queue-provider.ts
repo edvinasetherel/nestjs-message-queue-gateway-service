@@ -1,8 +1,10 @@
-import { IMessageQueueGateway } from "../../ports/driven/IMessageQueueGateway";
+import { MessageQueueProvider } from "@/adapters/driven/message-queue-provider.js";
 
-export default class InMemoryQueueProvider implements IMessageQueueGateway
+export default class InMemoryQueueProvider
+implements MessageQueueProvider
 {
     private readonly queue: string[];
+
     constructor()
     {
         this.queue = [];

@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
-import { MessageQueueService } from "@/message-queue.service.js";
+import { MessageQueueService } from "@/app/services/message-queue.service.js";
 
 @Controller()
 export class AppController

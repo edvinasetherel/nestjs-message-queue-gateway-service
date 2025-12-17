@@ -1,5 +1,5 @@
 <h1 align="center">
-    Messaging Queue Gateway
+    Message Queue Gateway Service
 </h1>
 
 <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg" alt="License"/>

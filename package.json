@@ -1,5 +1,5 @@
 {
-    "name": "nestjs-messaging-gateway",
+    "name": "nestjs-message-queue-gateway-service",
     "version": "0.0.1",
     "type": "module",
     "description": "",
