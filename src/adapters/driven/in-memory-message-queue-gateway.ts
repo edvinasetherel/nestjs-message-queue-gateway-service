@@ -1,4 +1,4 @@
-import { MessageQueueGateway } from "@/app/ports/driven/message-queue.gateway.js";
+import { MessageQueueGateway } from "@/app/ports/driven/message-queue-gateway.js";
 
 export class InMemoryMessageQueueGateway
 implements MessageQueueGateway
@@ -8,6 +8,11 @@ implements MessageQueueGateway
     )
     {
         this.__queue = [];
+    }
+
+    get queue(): string[]
+    {
+        return this.__queue;
     }
 
     async publish(message: string): Promise<void>

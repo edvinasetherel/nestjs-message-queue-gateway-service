@@ -3,15 +3,20 @@ import { MessageQueueProvider } from "@/adapters/driven/message-queue-provider.j
 export default class InMemoryQueueProvider
 implements MessageQueueProvider
 {
-    private readonly queue: string[];
+    private readonly __queue: string[];
 
     constructor()
     {
-        this.queue = [];
+        this.__queue = [];
+    }
+
+    get queue(): string[]
+    {
+        return this.__queue;
     }
 
     async publish(message: string): Promise<void>
     {
-        this.queue.push(message);
+        this.__queue.push(message);
     }
 }
