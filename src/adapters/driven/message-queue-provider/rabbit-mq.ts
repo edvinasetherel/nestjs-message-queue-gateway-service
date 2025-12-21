@@ -28,7 +28,6 @@ implements MessageQueueProvider
         {
             throw new ProviderError(`The provider ${this} is closed. Cannot publish the message`);
         }
-        console.log(`Publishing message ${message} to queue ${this.queueName}`);
         const canAcceptMore = this.__channel!.sendToQueue(
             this.queueName,
             Buffer.from(message),
