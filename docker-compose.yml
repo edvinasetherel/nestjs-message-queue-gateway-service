@@ -5,10 +5,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MESSAGE_QUEUE_RABBITMQ_URL: ${MESSAGE_QUEUE_RABBITMQ_URL}
+      MESSAGE_QUEUE_RABBITMQ_QUEUES: ${MESSAGE_QUEUE_RABBITMQ_QUEUES}
+      MESSAGE_QUEUE_IS_DUMMY: ${MESSAGE_QUEUE_IS_DUMMY}
+      HOST: ${HOST}
+      HOST_PORT: ${HOST_PORT}
     depends_on:
-      rabbitmq:
-        condition: service_healthy
+        rabbitmq:
+          condition: service_healthy
 
   rabbitmq:
     image: rabbitmq:4.2.2-management-alpine

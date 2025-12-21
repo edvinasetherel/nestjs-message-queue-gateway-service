@@ -1,16 +1,18 @@
 import { describe, it } from "vitest";
 import request from "supertest";
-import { POST_MESSAGE_ENDPOINT_PATH } from "#adapters/driving/app.controller.js";
+import { POST_MESSAGE_ENDPOINT_PATH } from "#adapters/driving/nestjs-rest-http/app.controller.js";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = `http://${process.env.HOST}:${process.env.HOST_PORT}`;
 
 describe("When the application publishes a message", () =>
 {
-    it("should deliver to a queue", async () =>
+    it.concurrent.each([
+        { content: "Test" },
+        { content: "Test 2" },
+        { content: "Test 2" },
+        { content: "Test 2" },
+    ])("should deliver to a message to queue concurrently", async (message) =>
     {
-        const message = {
-            content: "Test",
-        };
         await request(BASE_URL)
             .post(POST_MESSAGE_ENDPOINT_PATH)
             .send(message)

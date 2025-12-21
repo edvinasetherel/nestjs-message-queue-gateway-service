@@ -1,11 +1,12 @@
-import { MessageQueueGateway } from "#app/ports/driven/message-queue-gateway.js";
+import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 
-export class InMemoryMessageQueueGateway
-implements MessageQueueGateway
+
+export default class InMemoryMessageQueueProvider
+    implements MessageQueueProvider
 {
     private readonly __queue: string[];
-    constructor(
-    )
+
+    constructor()
     {
         this.__queue = [];
     }

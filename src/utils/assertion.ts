@@ -11,7 +11,7 @@ export class AssertionError
     constructor(message: string)
     {
         super(message);
-        this.name = "AssertionError";
+        this.name = this.constructor.name;
     }
 }
 

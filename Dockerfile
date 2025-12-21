@@ -10,4 +10,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["node", "dist/app/main.js"]
+CMD ["node", "dist/adapters/driving/nestjs-rest-http/entrypoint"]

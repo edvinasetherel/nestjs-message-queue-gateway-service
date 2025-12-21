@@ -1,6 +1,7 @@
-import { MessageQueueProvider } from "#adapters/driven/message-queue-provider.js";
+import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 
-export class CompositeMessageQueueGateway implements MessageQueueProvider
+
+export class CompositeMessageQueueGateway
 {
     constructor(
         private readonly providers: MessageQueueProvider[],

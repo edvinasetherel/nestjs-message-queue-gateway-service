@@ -6,6 +6,7 @@ export default defineConfig({
     test: {
         globals: true,
         root: "./",
+        envDir: "./config",
     },
     resolve: {
         alias: {

@@ -1,7 +1,16 @@
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Logger, Post } from "@nestjs/common";
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    HttpCode,
+    HttpStatus,
+    InternalServerErrorException,
+    Logger,
+    Post,
+} from "@nestjs/common";
 import { MessageQueueService } from "#app/services/message-queue.service.js";
-import type MessageDto from "#adapters/driving/messsage.dto.js";
 import Message from "#app/domain/message.js";
+import type MessageDto from "#adapters/driving/nestjs-rest-http/messsage.dto.js";
 
 export const POST_MESSAGE_ENDPOINT_PATH = "/messages";
 
@@ -30,6 +39,14 @@ export class AppController
             throw new BadRequestException("The message is malformed");
         }
 
-        await this.messagingQueueService.publish(message.content);
+        try
+        {
+            await this.messagingQueueService.publish(message.content);
+        }
+        catch (e)
+        {
+            logger.error(e);
+            throw new InternalServerErrorException(e);
+        }
     }
 }

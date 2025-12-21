@@ -14,5 +14,5 @@
         },
         "deleteOutDir": true
     },
-    "entryFile": "app/main"
+    "entryFile": "adapters/driving/nestjs-rest-http/entrypoint"
 }
