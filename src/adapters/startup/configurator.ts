@@ -5,7 +5,14 @@ import { RabbitMqProvider } from "#adapters/driven/message-queue-provider/rabbit
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
 import InMemoryMessageQueueProvider from "#adapters/driven/message-queue-provider/in-memory.js";
-import { AppProperties, retrieveProperties } from "#adapters/startup/properties/properties.js";
+import {
+    AppProperties,
+    AwsCredentials,
+    retrieveProperties,
+    SqsProperties,
+} from "#adapters/startup/properties/properties.js";
+import { CreateQueueCommand, GetQueueUrlCommand, QueueDoesNotExist, SQSClient } from "@aws-sdk/client-sqs";
+import { SqsProvider } from "#adapters/driven/message-queue-provider/sqs.js";
 
 export interface Dependencies
 {
@@ -84,6 +91,80 @@ async function createRabbitMqProviders(
     return Result.success(providers);
 }
 
+async function createSqsProvider(
+    client: SQSClient,
+    queueName: string,
+): Promise<Result<SqsProvider>>
+{
+    let queueUrl: string;
+    try
+    {
+        const command = new GetQueueUrlCommand({ QueueName: queueName });
+        const response = await client.send(command);
+        queueUrl = response.QueueUrl!;
+    }
+    catch (err)
+    {
+        if (!(err instanceof QueueDoesNotExist))
+        {
+            return Result.failure(err);
+        }
+        try
+        {
+            console.log(`Queue ${queueName} does not exist, creating...`);
+            const createCommand = new CreateQueueCommand({ QueueName: queueName });
+            const createResponse = await client.send(createCommand);
+            queueUrl = createResponse.QueueUrl!;
+            console.log(`Queue ${queueName} created at ${queueUrl}`);
+        }
+        catch (createErr)
+        {
+            return Result.failure(createErr);
+        }
+    }
+    return Result.success(new SqsProvider(
+        client,
+        queueUrl,
+    ));
+}
+
+async function createSqsProviders(
+    awsCredentials: AwsCredentials,
+    sqsProperties: SqsProperties,
+): Promise<Result<SqsProvider[]>>
+{
+    let client: SQSClient;
+    try
+    {
+        client = new SQSClient({
+            endpoint: sqsProperties.endpoint,
+            region: sqsProperties.region,
+            credentials: {
+                accessKeyId: awsCredentials.accessKeyId,
+                secretAccessKey: awsCredentials.secretAccessKey,
+            },
+        });
+    }
+    catch (e)
+    {
+        return Result.failure(e);
+    }
+    const providers: SqsProvider[] = [];
+    for (const queueName of sqsProperties.queueNames)
+    {
+        const providerRes = await createSqsProvider(
+            client,
+            queueName,
+        );
+        if (providerRes.isFailure)
+        {
+            return Result.failure(providerRes.exceptionOrNull());
+        }
+        providers.push(providerRes.getOrThrow());
+    }
+    return Result.success(providers);
+}
+
 async function buildMessageQueue(
     configuration: AppProperties,
 ): Promise<Result<CompositeMessageQueueGateway>>
@@ -97,18 +178,27 @@ async function buildMessageQueue(
     }
     for (const provider of configuration.messageQueue.providers)
     {
-        if (provider.type === "rabbitmq")
+        let providerRes: Result<MessageQueueProvider[]>;
+        switch (provider.type)
         {
-            const rabbitMqProvidersResult = await createRabbitMqProviders(
-                provider.url,
-                provider.queueNames,
-            );
-            if (rabbitMqProvidersResult.isFailure)
-            {
-                return Result.failure(rabbitMqProvidersResult.exceptionOrNull());
-            }
-            providers.push(...rabbitMqProvidersResult.getOrThrow());
+            case "rabbitmq":
+                providerRes = await createRabbitMqProviders(
+                    provider.url,
+                    provider.queueNames,
+                );
+                break;
+            case "sqs":
+                providerRes = await createSqsProviders(
+                    configuration.awsCredentials,
+                    provider,
+                );
+                break;
         }
+        if (providerRes.isFailure)
+        {
+            return Result.failure(providerRes.exceptionOrNull());
+        }
+        providers.push(...providerRes.getOrThrow());
     }
     return Result.success(
         new CompositeMessageQueueGateway(providers),

@@ -2,17 +2,18 @@ import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
 
-export class SqsProvider implements MessageQueueProvider
+export class SqsProvider
+implements MessageQueueProvider
 {
     private __client: SQSClient | null;
     private readonly __queueUrl: string;
 
     constructor(
         client: SQSClient,
-        queueName: string,
+        queueUrl: string,
     )
     {
-        this.__queueUrl = queueName;
+        this.__queueUrl = queueUrl;
         this.__client = client;
     }
 

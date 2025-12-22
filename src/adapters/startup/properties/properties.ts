@@ -2,19 +2,25 @@ import { Result } from "#utils/result.js";
 import { getEnumProperty, getRequiredStringProperty } from "#adapters/startup/properties/utils.js";
 import PropertyValidationError from "#adapters/startup/properties/error.js";
 
-interface RabbitMqProperties
+export interface RabbitMqProperties
 {
     readonly type: "rabbitmq";
     readonly url: string;
     readonly queueNames: string[];
 }
 
-interface SqsProperties
+export interface SqsProperties
 {
     readonly type: "sqs";
     readonly endpoint: string;
     readonly region: string;
     readonly queueNames: string[];
+}
+
+export interface AwsCredentials
+{
+    readonly accessKeyId: string;
+    readonly secretAccessKey: string;
 }
 
 type ProviderProperties = RabbitMqProperties | SqsProperties;
@@ -27,6 +33,7 @@ export type AppProperties = {
     host: string;
     hostPort: string;
     messageQueue: MessageQueueProperties;
+    awsCredentials: AwsCredentials;
 };
 
 function retrieveSqsProperties(properties: NodeJS.Dict<string>): SqsProperties | null
@@ -84,6 +91,16 @@ function getMessageQueueProperties(properties: NodeJS.Dict<string>): MessageQueu
     };
 }
 
+function getAwsCredentials(properties: NodeJS.Dict<string>): AwsCredentials
+{
+    const accessKeyId = getRequiredStringProperty("AWS_ACCESS_KEY_ID", properties);
+    const secretAccessKey = getRequiredStringProperty("AWS_SECRET_ACCESS_KEY", properties);
+    return {
+        accessKeyId,
+        secretAccessKey,
+    };
+}
+
 export function retrieveProperties(properties: NodeJS.Dict<string>): Result<AppProperties>
 {
     try
@@ -92,6 +109,7 @@ export function retrieveProperties(properties: NodeJS.Dict<string>): Result<AppP
             host: getRequiredStringProperty("HOST", properties),
             hostPort: getRequiredStringProperty("HOST_PORT", properties),
             messageQueue: getMessageQueueProperties(properties),
+            awsCredentials: getAwsCredentials(properties),
         });
     }
     catch (e)
