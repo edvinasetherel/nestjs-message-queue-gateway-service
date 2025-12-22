@@ -6,8 +6,8 @@ export class MessagePublisherService
         private readonly gateway: CompositeMessageQueueGateway,
     ) {}
 
-    async publish(message: string)
+    async publish(message: string, queueName: string)
     {
-        await this.gateway.publish(message);
+        await this.gateway.publish(message, queueName);
     }
 }

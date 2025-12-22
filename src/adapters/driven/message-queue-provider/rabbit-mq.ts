@@ -17,6 +17,40 @@ implements MessageQueueProvider
         this.__channel = channel;
     }
 
+    async subscribe(handler: (message: string) => Promise<void>): Promise<void>
+    {
+        if (this.isClosed)
+        {
+            throw new ProviderError(`The provider ${this} is closed. Cannot subscribe`);
+        }
+
+        console.log(`Subscribing to RabbitMQ queue: ${this.queueName}`);
+
+        await this.__channel!.consume(
+            this.queueName,
+            async (msg) =>
+            {
+                if (msg === null)
+                {
+                    return;
+                }
+                try
+                {
+                    const content = msg.content.toString();
+                    console.log(`Received message from RabbitMQ:${this.queueName}: ${content}`);
+                    await handler(content);
+                    this.__channel!.ack(msg);
+                }
+                catch (error)
+                {
+                    console.error("Error processing message:", error);
+                    this.__channel!.nack(msg, false, false);
+                }
+            },
+            { noAck: false },
+        );
+    }
+
     get isClosed()
     {
         return this.__channel === null;

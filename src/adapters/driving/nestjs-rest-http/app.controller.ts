@@ -5,12 +5,13 @@ import {
     HttpCode,
     HttpStatus,
     InternalServerErrorException,
-    Logger,
+    Logger, NotFoundException,
     Post,
 } from "@nestjs/common";
 import { MessagePublisherService } from "#app/services/message-publisher.service.js";
 import Message from "#app/domain/message.js";
 import type MessageDto from "#adapters/driving/nestjs-rest-http/messsage.dto.js";
+import UnrecognizedQueueError from "#app/unrecognized-queue-error.js";
 
 export const POST_MESSAGE_ENDPOINT_PATH = "/messages";
 
@@ -41,11 +42,16 @@ export class AppController
 
         try
         {
-            await this.messagingQueueService.publish(message.content);
+            await this.messagingQueueService.publish(message.content, message.queueName);
         }
         catch (e)
         {
             logger.error(e);
+            if (e instanceof UnrecognizedQueueError)
+            {
+                throw new NotFoundException(e.message);
+            }
+
             throw new InternalServerErrorException(e);
         }
     }

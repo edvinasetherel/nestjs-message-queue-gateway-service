@@ -7,6 +7,7 @@ implements MessageQueueProvider
 {
     private __client: SQSClient | null;
     private readonly __queueUrl: string;
+    readonly queueName: string;
 
     constructor(
         client: SQSClient,
@@ -15,6 +16,18 @@ implements MessageQueueProvider
     {
         this.__queueUrl = queueUrl;
         this.__client = client;
+        this.queueName = this.__getQueueName(queueUrl);
+    }
+
+    private __getQueueName(queueUrl: string): string
+    {
+        const urlParts = queueUrl.split("/");
+        return urlParts[urlParts.length - 1];
+    }
+
+    subscribe(handler: (message: string) => Promise<void>, queueName: string): Promise<void>
+    {
+        throw new Error("Method not implemented.");
     }
 
     get isClosed()
@@ -41,7 +54,6 @@ implements MessageQueueProvider
 
     async close(): Promise<void>
     {
-        this.__client?.destroy();
         this.__client = null;
     }
 

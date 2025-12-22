@@ -23,7 +23,8 @@
         "paths": {
             "#app/*": ["app/*"],
             "#adapters/*": ["adapters/*"],
-            "#utils/*": ["utils/*"]
+            "#utils/*": ["utils/*"],
+            "#tests/*": ["../tests/*"]
         }
     }
 }
