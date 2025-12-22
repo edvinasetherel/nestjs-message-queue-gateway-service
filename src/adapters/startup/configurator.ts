@@ -89,7 +89,7 @@ async function buildMessageQueue(
 ): Promise<Result<CompositeMessageQueueGateway>>
 {
     const providers: MessageQueueProvider[] = [];
-    if (configuration.messageQueue.isDummy)
+    if (configuration.messageQueue.providers.length === 0)
     {
         return Result.success(new CompositeMessageQueueGateway([
             new InMemoryMessageQueueProvider(),

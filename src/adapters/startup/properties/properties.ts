@@ -11,14 +11,15 @@ interface RabbitMqProperties
 
 interface SqsProperties
 {
-    type: "sqs";
-    queueUrl: string;
+    readonly type: "sqs";
+    readonly endpoint: string;
+    readonly region: string;
+    readonly queueNames: string[];
 }
 
 type ProviderProperties = RabbitMqProperties | SqsProperties;
 
 type MessageQueueProperties = {
-    isDummy: boolean;
     providers: ProviderProperties[];
 };
 
@@ -28,24 +29,36 @@ export type AppProperties = {
     messageQueue: MessageQueueProperties;
 };
 
-function getRabbitMqProperties(properties: NodeJS.Dict<string>): RabbitMqProperties | null
+function retrieveSqsProperties(properties: NodeJS.Dict<string>): SqsProperties | null
+{
+    const endpointPropertyName = "MESSAGE_QUEUE_SQS_ENDPOINT";
+    const regionPropertyName = "MESSAGE_QUEUE_SQS_REGION";
+    const queueNamesPropertyName = "MESSAGE_QUEUE_SQS_QUEUES";
+    const endpoint = getRequiredStringProperty(endpointPropertyName, properties);
+    const region = getRequiredStringProperty(regionPropertyName, properties);
+    const queueNames = getRequiredStringProperty(queueNamesPropertyName, properties);
+
+    const queueNamesArray = queueNames.split(",").map((queueName) => queueName.trim())
+        .filter((queueName) => queueName);
+    if (queueNamesArray.length === 0)
+    {
+        throw new PropertyValidationError(`Property ${queueNamesPropertyName} must contain at least one queue name comma separated`);
+    }
+
+    return {
+        type: "sqs",
+        endpoint,
+        region,
+        queueNames: queueNamesArray,
+    };
+}
+
+function retrieveRabbitMqProperties(properties: NodeJS.Dict<string>): RabbitMqProperties | null
 {
     const urlPropertyName = "MESSAGE_QUEUE_RABBITMQ_URL";
     const queueNamesPropertyName = "MESSAGE_QUEUE_RABBITMQ_QUEUES";
-    const url = properties[urlPropertyName]?.trim();
-    const queueNames = properties[queueNamesPropertyName]?.trim();
-    if (url === undefined && queueNames === undefined)
-    {
-        return null;
-    }
-    if (!url)
-    {
-        throw new PropertyValidationError(`Property ${urlPropertyName} is required`);
-    }
-    if (!queueNames)
-    {
-        throw new PropertyValidationError(`Property ${queueNamesPropertyName} is required`);
-    }
+    const url = getRequiredStringProperty(urlPropertyName, properties);
+    const queueNames = getRequiredStringProperty(queueNamesPropertyName, properties);
     const queueNamesArray = queueNames.split(",").map((queueName) => queueName.trim())
         .filter((queueName) => queueName);
     if (queueNamesArray.length === 0)
@@ -61,23 +74,12 @@ function getRabbitMqProperties(properties: NodeJS.Dict<string>): RabbitMqPropert
 
 function getMessageQueueProperties(properties: NodeJS.Dict<string>): MessageQueueProperties
 {
-    const isDummy = getEnumProperty("MESSAGE_QUEUE_IS_DUMMY", properties, ["1", "0"]) === "1";
-    if (isDummy)
-    {
-        return {
-            isDummy,
-            providers: [],
-        };
-    }
-    const providers: ProviderProperties[] = [];
-    const rabbitMqProperties = getRabbitMqProperties(properties);
-    if (!rabbitMqProperties)
-    {
-        throw new PropertyValidationError("MESSAGE_QUEUE_RABBITMQ_URL and MESSAGE_QUEUE_RABBITMQ_QUEUES must be set");
-    }
-    providers.push(rabbitMqProperties);
+    const isRabbitMqActive = getEnumProperty("MESSAGE_QUEUE_RABBITMQ_ACTIVE", properties, ["1", "0"]) === "1";
+    const rabbitMqProperties = (isRabbitMqActive && retrieveRabbitMqProperties(properties)) || null;
+    const isSqsActive = getEnumProperty("MESSAGE_QUEUE_SQS_ACTIVE", properties, ["1", "0"]) === "1";
+    const sqsProperties = (isSqsActive && retrieveSqsProperties(properties)) || null;
+    const providers = [rabbitMqProperties, sqsProperties].filter((provider) => provider !== null);
     return {
-        isDummy: false,
         providers: providers,
     };
 }

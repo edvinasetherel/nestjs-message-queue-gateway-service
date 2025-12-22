@@ -5,9 +5,20 @@ services:
     ports:
       - "3000:3000"
     environment:
+      MESSAGE_QUEUE_SQS_ACTIVE: ${MESSAGE_QUEUE_SQS_ACTIVE}
+      MESSAGE_QUEUE_SQS_ENDPOINT: ${MESSAGE_QUEUE_SQS_ENDPOINT}
+      MESSAGE_QUEUE_SQS_REGION: ${MESSAGE_QUEUE_SQS_REGION}
+      MESSAGE_QUEUE_SQS_QUEUES: ${MESSAGE_QUEUE_SQS_QUEUES}
+
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
       MESSAGE_QUEUE_RABBITMQ_URL: ${MESSAGE_QUEUE_RABBITMQ_URL}
       MESSAGE_QUEUE_RABBITMQ_QUEUES: ${MESSAGE_QUEUE_RABBITMQ_QUEUES}
+      MESSAGE_QUEUE_RABBITMQ_ACTIVE: ${MESSAGE_QUEUE_RABBITMQ_ACTIVE}
+
       MESSAGE_QUEUE_IS_DUMMY: ${MESSAGE_QUEUE_IS_DUMMY}
+
       HOST: ${HOST}
       HOST_PORT: ${HOST_PORT}
     depends_on:
@@ -24,3 +35,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  localstack:
+      image: localstack/localstack:4
+      ports:
+        - "4566:4566"
+      environment:
+        - SERVICES=sqs
+        - DEBUG=1
+        - AWS_DEFAULT_REGION=us-east-1
