@@ -1,8 +1,7 @@
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 
-
 export default class InMemoryMessageQueueProvider
-    implements MessageQueueProvider
+implements MessageQueueProvider
 {
     private readonly __queue: string[];
 

@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { MessageQueueService } from "#app/services/message-queue.service.js";
+import { MessagePublisherService } from "#app/services/message-publisher.service.js";
 
 import { AppController } from "#adapters/driving/nestjs-rest-http/app.controller.js";
 import { Dependencies } from "#adapters/startup/configurator.js";
@@ -16,7 +16,7 @@ export class AppModule
             controllers: [AppController],
             providers: [
                 {
-                    provide: MessageQueueService,
+                    provide: MessagePublisherService,
                     useValue: messageQueueService,
                 },
             ],

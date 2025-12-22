@@ -1,6 +1,6 @@
 import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
 
-export class MessageQueueService
+export class MessagePublisherService
 {
     constructor(
         private readonly gateway: CompositeMessageQueueGateway,

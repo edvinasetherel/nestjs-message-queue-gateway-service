@@ -8,7 +8,7 @@ import {
     Logger,
     Post,
 } from "@nestjs/common";
-import { MessageQueueService } from "#app/services/message-queue.service.js";
+import { MessagePublisherService } from "#app/services/message-publisher.service.js";
 import Message from "#app/domain/message.js";
 import type MessageDto from "#adapters/driving/nestjs-rest-http/messsage.dto.js";
 
@@ -19,7 +19,7 @@ const logger = new Logger("AppController");
 @Controller()
 export class AppController
 {
-    constructor(private readonly messagingQueueService: MessageQueueService) {}
+    constructor(private readonly messagingQueueService: MessagePublisherService) {}
 
     @Post(POST_MESSAGE_ENDPOINT_PATH)
     @HttpCode(HttpStatus.ACCEPTED)

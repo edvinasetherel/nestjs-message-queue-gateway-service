@@ -1,6 +1,6 @@
 import amqp from "amqplib";
 import { Result } from "#utils/result.js";
-import { MessageQueueService } from "#app/services/message-queue.service.js";
+import { MessagePublisherService } from "#app/services/message-publisher.service.js";
 import { RabbitMqProvider } from "#adapters/driven/message-queue-provider/rabbit-mq.js";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
@@ -16,7 +16,7 @@ import { SqsProvider } from "#adapters/driven/message-queue-provider/sqs.js";
 
 export interface Dependencies
 {
-    messageQueueService: MessageQueueService;
+    messageQueueService: MessagePublisherService;
 }
 
 async function createRabbitMqChannelModel(
@@ -223,7 +223,7 @@ export async function bootstrap(): Promise<Result<Dependencies>>
     }
 
     return Result.success({
-        messageQueueService: new MessageQueueService(
+        messageQueueService: new MessagePublisherService(
             messageQueueGatewayRes.getOrThrow(),
         ),
     });
