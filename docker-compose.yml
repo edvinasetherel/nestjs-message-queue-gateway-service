@@ -17,11 +17,11 @@ services:
       MESSAGE_QUEUE_RABBITMQ_QUEUES: ${MESSAGE_QUEUE_RABBITMQ_QUEUES}
       MESSAGE_QUEUE_RABBITMQ_ACTIVE: ${MESSAGE_QUEUE_RABBITMQ_ACTIVE}
 
-      MESSAGE_QUEUE_IS_DUMMY: ${MESSAGE_QUEUE_IS_DUMMY}
-
       HOST: ${HOST}
       HOST_PORT: ${HOST_PORT}
     depends_on:
+        localstack:
+          condition: service_healthy
         rabbitmq:
           condition: service_healthy
 

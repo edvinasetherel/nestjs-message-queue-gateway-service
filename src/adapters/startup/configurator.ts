@@ -172,6 +172,7 @@ async function buildMessageQueue(
     const providers: MessageQueueProvider[] = [];
     if (configuration.messageQueue.providers.length === 0)
     {
+        console.log("No message queue providers configured, using in-memory provider");
         return Result.success(new CompositeMessageQueueGateway([
             new InMemoryMessageQueueProvider(),
         ]));
