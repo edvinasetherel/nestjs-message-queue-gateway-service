@@ -14,6 +14,10 @@ import {
 import { CreateQueueCommand, GetQueueUrlCommand, QueueDoesNotExist, SQSClient } from "@aws-sdk/client-sqs";
 import { SqsProvider } from "#adapters/driven/message-queue-provider/sqs.js";
 import { SubscriberService } from "#app/services/subscriber.service.js";
+import { Logger } from "#app/ports/driven/logger.js";
+import { appLogger, getLogger } from "#app/app-logger.js";
+
+let logger: Logger | null = null;
 
 export interface Dependencies
 {
@@ -113,11 +117,11 @@ async function createSqsProvider(
         }
         try
         {
-            console.log(`Queue ${queueName} does not exist, creating...`);
+            logger!.debug(`Queue ${queueName} does not exist, creating...`);
             const createCommand = new CreateQueueCommand({ QueueName: queueName });
             const createResponse = await client.send(createCommand);
             queueUrl = createResponse.QueueUrl!;
-            console.log(`Queue ${queueName} created at ${queueUrl}`);
+            logger!.debug(`Queue ${queueName} created at ${queueUrl}`);
         }
         catch (createErr)
         {
@@ -174,7 +178,7 @@ async function buildMessageQueue(
     const providers: MessageQueueProvider[] = [];
     if (configuration.messageQueue.providers.length === 0)
     {
-        console.log("No message queue providers configured, using in-memory provider");
+        logger!.debug("No message queue providers configured, using in-memory provider");
         return Result.success(
             new CompositeMessageQueueGateway(
                 Array.from(
@@ -213,8 +217,15 @@ async function buildMessageQueue(
     );
 }
 
-export async function bootstrap(): Promise<Result<Dependencies>>
+export async function bootstrap(
+    loggerProvider?: Logger,
+): Promise<Result<Dependencies>>
 {
+    if (loggerProvider)
+    {
+        appLogger.setLogger(loggerProvider);
+        logger = getLogger("Configurator");
+    }
     const configurationsRes = retrieveProperties(process.env);
     if (configurationsRes.isFailure)
     {

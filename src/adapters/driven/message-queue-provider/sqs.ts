@@ -1,6 +1,9 @@
 import { DeleteMessageCommand, ReceiveMessageCommand, SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
+import { getLogger } from "#app/app-logger.js";
+
+const logger = getLogger("SqsProvider");
 
 export class SqsProvider
 implements MessageQueueProvider
@@ -44,13 +47,13 @@ implements MessageQueueProvider
         {
             return;
         }
-        console.log(`Received ${response.Messages.length} message(s) from SQS queue: ${this.queueName}`);
+        logger.debug(`${this}: Received ${response.Messages.length} message(s)`);
 
         for (const message of response.Messages)
         {
             if (message.Body)
             {
-                console.log(`Processing message from SQS:${this.queueName}: ${message.Body}`);
+                logger.debug(`Processing message from SQS:${this.queueName}: ${message.Body}`);
                 await handler(message.Body);
 
                 const deleteCommand = new DeleteMessageCommand({
@@ -58,7 +61,7 @@ implements MessageQueueProvider
                     ReceiptHandle: message.ReceiptHandle!,
                 });
                 await this.__client!.send(deleteCommand);
-                console.log(`Message deleted from SQS queue: ${this.queueName}`);
+                logger.debug(`${this}: Message deleted from SQS queue`);
             }
         }
     }
@@ -75,7 +78,7 @@ implements MessageQueueProvider
             throw new ProviderError(`The provider ${this} is closed. Cannot publish the message`);
         }
 
-        console.log(`Publishing message ${message} to queue ${this.__queueUrl}`);
+        logger.debug(`${this}: Publishing message->${message}`);
 
         const command = new SendMessageCommand({
             QueueUrl: this.__queueUrl,

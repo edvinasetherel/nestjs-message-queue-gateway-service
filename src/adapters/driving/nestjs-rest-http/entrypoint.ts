@@ -1,13 +1,13 @@
 import { NestFactory } from "@nestjs/core";
-import { Logger } from "@nestjs/common";
 import { AppModule } from "#adapters/driving/nestjs-rest-http/app.module.js";
 import { bootstrap } from "#adapters/startup/configurator.js";
+import { NestJsLogger } from "#adapters/driven/logger/nestjs.js";
 
-const logger = new Logger("entrypoint");
+const logger = new NestJsLogger("Entrypoint");
 
 async function entrypointBootstrap()
 {
-    const appLoadResult = await bootstrap();
+    const appLoadResult = await bootstrap(logger);
     if (appLoadResult.isFailure)
     {
         throw new Error("App core failed to load", { cause: appLoadResult.exceptionOrNull() });
@@ -20,7 +20,7 @@ async function entrypointBootstrap()
     const port = process.env.HOST_PORT!;
     const host = process.env.HOST!;
     await app.listen(port, host);
-    logger.log(`Listening on http://${host}:${port}`);
+    logger.debug(`Listening on http://${host}:${port}`);
 }
 
 await entrypointBootstrap();

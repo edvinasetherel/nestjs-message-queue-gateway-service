@@ -1,6 +1,9 @@
 import amqp from "amqplib";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
+import { getLogger } from "#app/app-logger.js";
+
+const logger = getLogger("RabbitMqProvider");
 
 export class RabbitMqProvider
 implements MessageQueueProvider
@@ -24,7 +27,7 @@ implements MessageQueueProvider
             throw new ProviderError(`The provider ${this} is closed. Cannot subscribe`);
         }
 
-        console.log(`Subscribing to RabbitMQ queue: ${this.queueName}`);
+        logger.debug(`Subscribing to RabbitMQ queue: ${this.queueName}`);
 
         await this.__channel!.consume(
             this.queueName,
@@ -37,13 +40,13 @@ implements MessageQueueProvider
                 try
                 {
                     const content = msg.content.toString();
-                    console.log(`Received message from RabbitMQ:${this.queueName}: ${content}`);
+                    logger.debug(`Received message from RabbitMQ:${this.queueName} -> ${content}`);
                     await handler(content);
                     this.__channel!.ack(msg);
                 }
                 catch (error)
                 {
-                    console.error("Error processing message:", error);
+                    logger.error("Error processing message:", error);
                     this.__channel!.nack(msg, false, false);
                 }
             },

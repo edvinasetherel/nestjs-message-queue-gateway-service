@@ -31,5 +31,4 @@ A Nest.js REST API that:
 ## Deployment
 <!-- TODO -->
 ## License
-
-Project is [MIT licensed](./LICENSE).
+Project is [MIT licensed](./LICENSE)

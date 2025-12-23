@@ -10,7 +10,6 @@ export class SubscriberService
         private readonly gateway: CompositeMessageQueueGateway,
     )
     {
-        console.log("SubscriberService created");
     }
 
     async subscribe(queueName: string, handler: (message: string) => Promise<void>): Promise<void>
