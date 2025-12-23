@@ -1,6 +1,6 @@
 {
     "name": "nestjs-message-queue-gateway-service",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "type": "module",
     "description": "",
     "author": "Edvinas Sadlevicius",
