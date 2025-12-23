@@ -3,10 +3,12 @@ import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gatew
 import InMemoryMessageQueueProvider from "#adapters/driven/message-queue-provider/in-memory.js";
 import { createRandomMessage } from "#tests/utils.js";
 import Message from "#app/domain/message.js";
+import UnrecognizedQueueError from "#app/unrecognized-queue-error.js";
 
 async function testPublish(message: Message, subscribeToQueue: string, queueGateway: CompositeMessageQueueGateway)
 {
     await queueGateway.subscribe(
+        subscribeToQueue,
         async (consumedMessage) =>
         {
             expect(
@@ -14,7 +16,6 @@ async function testPublish(message: Message, subscribeToQueue: string, queueGate
                 `Handler received wrong message. Expected: ${message.content} but found ${consumedMessage}`,
             ).toBeTruthy();
         },
-        subscribeToQueue,
     );
     await queueGateway.publish(message.content, subscribeToQueue);
 }
@@ -46,7 +47,7 @@ describe("InMemoryMessageQueueGateway", () =>
         it("should fail to publish a message to the unrecognized queue", async () =>
         {
             await expect(queueGateway.publish("test", "UNRECOGNIZED_QUEUE")).rejects.toThrow(
-                `Cannot publish message to queue UNRECOGNIZED_QUEUE. Queue does not exist`,
+                UnrecognizedQueueError,
             );
         });
     });
@@ -79,7 +80,7 @@ describe("InMemoryMessageQueueGateway", () =>
         it("should fail to publish a message to the unrecognized queue", async () =>
         {
             await expect(queueGateway.publish("test", "UNRECOGNIZED_QUEUE")).rejects.toThrow(
-                `Cannot publish message to queue UNRECOGNIZED_QUEUE. Queue does not exist`,
+                UnrecognizedQueueError,
             );
         });
     });

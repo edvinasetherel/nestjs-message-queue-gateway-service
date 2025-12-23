@@ -13,6 +13,7 @@ export default defineConfig({
             "#app": fileURLToPath(new URL("./src/app", import.meta.url)),
             "#tests": fileURLToPath(new URL("./tests", import.meta.url)),
             "#adapters": fileURLToPath(new URL("./src/adapters", import.meta.url)),
+            "#utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
         },
     },
 });

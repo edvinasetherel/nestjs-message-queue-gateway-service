@@ -1,4 +1,4 @@
-import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
+import { DeleteMessageCommand, ReceiveMessageCommand, SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
 
@@ -25,9 +25,42 @@ implements MessageQueueProvider
         return urlParts[urlParts.length - 1];
     }
 
-    subscribe(handler: (message: string) => Promise<void>, queueName: string): Promise<void>
+    async subscribe(handler: (message: string) => Promise<void>): Promise<void>
     {
-        throw new Error("Method not implemented.");
+        if (this.isClosed)
+        {
+            throw new ProviderError(`The provider ${this} is closed. Cannot subscribe`);
+        }
+
+        const command = new ReceiveMessageCommand({
+            QueueUrl: this.__queueUrl,
+            MaxNumberOfMessages: 10,
+            WaitTimeSeconds: 20,
+            MessageAttributeNames: ["All"],
+        });
+
+        const response = await this.__client!.send(command);
+        if (!response.Messages || response.Messages?.length <= 0)
+        {
+            return;
+        }
+        console.log(`Received ${response.Messages.length} message(s) from SQS queue: ${this.queueName}`);
+
+        for (const message of response.Messages)
+        {
+            if (message.Body)
+            {
+                console.log(`Processing message from SQS:${this.queueName}: ${message.Body}`);
+                await handler(message.Body);
+
+                const deleteCommand = new DeleteMessageCommand({
+                    QueueUrl: this.__queueUrl,
+                    ReceiptHandle: message.ReceiptHandle!,
+                });
+                await this.__client!.send(deleteCommand);
+                console.log(`Message deleted from SQS queue: ${this.queueName}`);
+            }
+        }
     }
 
     get isClosed()

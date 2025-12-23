@@ -3,43 +3,47 @@ import UnrecognizedQueueError from "#app/unrecognized-queue-error.js";
 
 export class CompositeMessageQueueGateway
 {
-    private readonly __queueNameProviders: Record<string, MessageQueueProvider[]>;
+    private readonly __providersByQueue: Map<string, MessageQueueProvider[]>;
     constructor(
         providers: MessageQueueProvider[],
     )
     {
-        this.__queueNameProviders = {};
+        this.__providersByQueue = new Map();
         providers.forEach((provider) =>
         {
-            if (this.__queueNameProviders[provider.queueName] === undefined)
+            if (!this.__providersByQueue.has(provider.queueName))
             {
-                this.__queueNameProviders[provider.queueName] = [];
+                this.__providersByQueue.set(provider.queueName, []);
             }
-            this.__queueNameProviders[provider.queueName].push(provider);
+            this.__providersByQueue.get(provider.queueName)!.push(provider);
         });
+    }
+
+    private getProviders(queueName: string): MessageQueueProvider[]
+    {
+        const providers = this.__providersByQueue.get(queueName);
+        if (!providers)
+        {
+            throw new UnrecognizedQueueError(queueName);
+        }
+        return providers;
     }
 
     async publish(message: string, queueName: string): Promise<void>
     {
-        if (this.__queueNameProviders[queueName] === undefined)
+        const providers = this.getProviders(queueName);
+        for (const provider of providers)
         {
-            throw new UnrecognizedQueueError(queueName);
-        }
-        for (const provider of this.__queueNameProviders[queueName])
-        {
-            await provider.publish(message, queueName);
+            await provider.publish(message);
         }
     }
 
-    async subscribe(handler: (message: string) => Promise<void>, queueName: string): Promise<void>
+    async subscribe(queueName: string, handler: (message: string) => Promise<void>): Promise<void>
     {
-        if (this.__queueNameProviders[queueName] === undefined)
+        const providers = this.getProviders(queueName);
+        for (const provider of providers)
         {
-            throw new UnrecognizedQueueError(queueName);
-        }
-        for (const provider of this.__queueNameProviders[queueName])
-        {
-            await provider.subscribe(handler, queueName);
+            await provider.subscribe(handler);
         }
     }
 }

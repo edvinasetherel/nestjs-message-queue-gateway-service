@@ -1,6 +1,6 @@
 import amqp from "amqplib";
 import { Result } from "#utils/result.js";
-import { MessagePublisherService } from "#app/services/message-publisher.service.js";
+import { PublisherService } from "#app/services/publisher.service.js";
 import { RabbitMqProvider } from "#adapters/driven/message-queue-provider/rabbit-mq.js";
 import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
 import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
@@ -13,10 +13,12 @@ import {
 } from "#adapters/startup/properties/properties.js";
 import { CreateQueueCommand, GetQueueUrlCommand, QueueDoesNotExist, SQSClient } from "@aws-sdk/client-sqs";
 import { SqsProvider } from "#adapters/driven/message-queue-provider/sqs.js";
+import { SubscriberService } from "#app/services/subscriber.service.js";
 
 export interface Dependencies
 {
-    messageQueueService: MessagePublisherService;
+    publisherService: PublisherService;
+    subscriberService: SubscriberService;
 }
 
 async function createRabbitMqChannelModel(
@@ -173,9 +175,14 @@ async function buildMessageQueue(
     if (configuration.messageQueue.providers.length === 0)
     {
         console.log("No message queue providers configured, using in-memory provider");
-        return Result.success(new CompositeMessageQueueGateway([
-            new InMemoryMessageQueueProvider("dummy"),
-        ]));
+        return Result.success(
+            new CompositeMessageQueueGateway(
+                Array.from(
+                    { length: 3 },
+                    (_, i) => new InMemoryMessageQueueProvider(`Queue-${i}`),
+                ),
+            ),
+        );
     }
     for (const provider of configuration.messageQueue.providers)
     {
@@ -221,10 +228,9 @@ export async function bootstrap(): Promise<Result<Dependencies>>
     {
         return Result.failure(messageQueueGatewayRes.exceptionOrNull());
     }
-
+    const gateway = messageQueueGatewayRes.getOrThrow();
     return Result.success({
-        messageQueueService: new MessagePublisherService(
-            messageQueueGatewayRes.getOrThrow(),
-        ),
+        publisherService: new PublisherService(gateway),
+        subscriberService: new SubscriberService(gateway),
     });
 }

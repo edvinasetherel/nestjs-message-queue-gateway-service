@@ -39,3 +39,26 @@ export function createRandomMessage({
 
     return isPlain ? plainObj : new Message(plainObj);
 }
+
+type SubscribeFactoryOptions = {
+    queueName?: string | null;
+};
+
+export function createSubscribeRequest({
+    queueName = null,
+}: SubscribeFactoryOptions = {})
+{
+    if (queueName === null)
+    {
+        queueName = `Queue-${crypto.randomUUID()}`;
+    }
+
+    return {
+        queueName: queueName,
+    };
+}
+
+export function createListOfSubscribeRequests(queues: string[])
+{
+    return queues.map((queueName) => createSubscribeRequest({ queueName }));
+}
