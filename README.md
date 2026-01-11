@@ -39,7 +39,7 @@ A Nest.js REST API that:
 
 2. **Install dependencies**
    ```bash
-   npm ci
+   pnpm install
    ```
 
 3. **Configure environment variables**
@@ -53,7 +53,7 @@ A Nest.js REST API that:
 This will start the application along with RabbitMQ and LocalStack (SQS emulator):
 
 ```bash
-  npm run start:docker
+pnpm start:docker
 ```
 
 The application will be available at `http://HOST:HOST_PORT` based on environment variables
@@ -63,7 +63,7 @@ Default env. file values equals to `http://localhost:3000`
 
 
 ```bash
-  npm run start:prod
+pnpm start:prod
 ```
 And set `MESSAGE_QUEUE_RABBITMQ_ACTIVE` and `MESSAGE_QUEUE_SQS_ACTIVE` to `0` if you want to run with dummy providers.
 Otherwise it will fail to start unless you will have the rabbitmq and localstack running, or both.
@@ -155,14 +155,14 @@ The project uses Vitest for testing
 
 ### Unit Tests
 ```bash
-  npm run test:unit
+pnpm test:unit
 ```
-Runts only unit tests
+Runs only unit tests
 ### Acceptance Tests
 Acceptance tests require Docker to run infrastructure (RabbitMQ and LocalStack)
 
 ```bash
-  npm run test:acceptance:pipeline
+pnpm test:acceptance:pipeline
 ```
 This command will:
 1. Start Docker containers.
@@ -171,10 +171,10 @@ This command will:
 
 Alternatively, if infrastructure is already running:
 ```bash
-  npm run test:acceptance
+pnpm test:acceptance
 ```
 
 ### Coverage
 ```bash
-  npm run test:cov
+pnpm test:cov
 ```
