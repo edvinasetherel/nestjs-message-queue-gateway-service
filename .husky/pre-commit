@@ -1,1 +1,2 @@
-npm run test:unit
+pnpm lint:fix
+pnpm test:unit

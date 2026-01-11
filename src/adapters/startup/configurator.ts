@@ -1,9 +1,19 @@
 import amqp from "amqplib";
-import { Result } from "#utils/result.js";
-import { PublisherService } from "#app/services/publisher.service.js";
-import { RabbitMqProvider } from "#adapters/driven/message-queue-provider/rabbit-mq.js";
-import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
-import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
+import {
+    Result,
+} from "#utils/result.js";
+import {
+    PublisherService,
+} from "#app/services/publisher.service.js";
+import {
+    RabbitMqProvider,
+} from "#adapters/driven/message-queue-provider/rabbit-mq.js";
+import {
+    MessageQueueProvider,
+} from "#app/ports/driven/message-queue-provider.js";
+import {
+    CompositeMessageQueueGateway,
+} from "#app/composite-message-queue-gateway.js";
 import InMemoryMessageQueueProvider from "#adapters/driven/message-queue-provider/in-memory.js";
 import {
     AppProperties,
@@ -11,11 +21,21 @@ import {
     retrieveProperties,
     SqsProperties,
 } from "#adapters/startup/properties/properties.js";
-import { CreateQueueCommand, GetQueueUrlCommand, QueueDoesNotExist, SQSClient } from "@aws-sdk/client-sqs";
-import { SqsProvider } from "#adapters/driven/message-queue-provider/sqs.js";
-import { SubscriberService } from "#app/services/subscriber.service.js";
-import { Logger } from "#app/ports/driven/logger.js";
-import { appLogger, getLogger } from "#app/app-logger.js";
+import {
+    CreateQueueCommand, GetQueueUrlCommand, QueueDoesNotExist, SQSClient,
+} from "@aws-sdk/client-sqs";
+import {
+    SqsProvider,
+} from "#adapters/driven/message-queue-provider/sqs.js";
+import {
+    SubscriberService,
+} from "#app/services/subscriber.service.js";
+import {
+    Logger,
+} from "#app/ports/driven/logger.js";
+import {
+    appLogger, getLogger,
+} from "#app/app-logger.js";
 
 let logger: Logger | null = null;
 
@@ -57,7 +77,12 @@ async function createRabbitMqProvider(
     }
     try
     {
-        await channel.assertQueue(queueName, { durable: true });
+        await channel.assertQueue(
+            queueName,
+            {
+                durable: true,
+            },
+        );
     }
     catch (e)
     {
@@ -105,7 +130,9 @@ async function createSqsProvider(
     let queueUrl: string;
     try
     {
-        const command = new GetQueueUrlCommand({ QueueName: queueName });
+        const command = new GetQueueUrlCommand({
+            QueueName: queueName,
+        });
         const response = await client.send(command);
         queueUrl = response.QueueUrl!;
     }
@@ -118,7 +145,9 @@ async function createSqsProvider(
         try
         {
             logger!.debug(`Queue ${queueName} does not exist, creating...`);
-            const createCommand = new CreateQueueCommand({ QueueName: queueName });
+            const createCommand = new CreateQueueCommand({
+                QueueName: queueName,
+            });
             const createResponse = await client.send(createCommand);
             queueUrl = createResponse.QueueUrl!;
             logger!.debug(`Queue ${queueName} created at ${queueUrl}`);
@@ -182,7 +211,9 @@ async function buildMessageQueue(
         return Result.success(
             new CompositeMessageQueueGateway(
                 Array.from(
-                    { length: 3 },
+                    {
+                        length: 3,
+                    },
                     (_, i) => new InMemoryMessageQueueProvider(`Queue-${i}`),
                 ),
             ),

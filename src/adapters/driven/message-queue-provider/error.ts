@@ -3,7 +3,10 @@ export default class ProviderError
 {
     constructor(message: string, options?: ErrorOptions)
     {
-        super(message, options);
+        super(
+            message,
+            options,
+        );
         this.name = this.constructor.name;
     }
 }

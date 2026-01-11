@@ -1,7 +1,11 @@
 import amqp from "amqplib";
-import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
+import {
+    MessageQueueProvider,
+} from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
-import { getLogger } from "#app/app-logger.js";
+import {
+    getLogger,
+} from "#app/app-logger.js";
 
 const logger = getLogger("RabbitMqProvider");
 
@@ -46,11 +50,20 @@ implements MessageQueueProvider
                 }
                 catch (error)
                 {
-                    logger.error("Error processing message:", error);
-                    this.__channel!.nack(msg, false, false);
+                    logger.error(
+                        "Error processing message:",
+                        error,
+                    );
+                    this.__channel!.nack(
+                        msg,
+                        false,
+                        false,
+                    );
                 }
             },
-            { noAck: false },
+            {
+                noAck: false,
+            },
         );
     }
 
@@ -68,14 +81,19 @@ implements MessageQueueProvider
         const canAcceptMore = this.__channel!.sendToQueue(
             this.queueName,
             Buffer.from(message),
-            { persistent: true },
+            {
+                persistent: true,
+            },
         );
 
         if (!canAcceptMore)
         {
             await new Promise<void>((resolve) =>
             {
-                this.__channel!.once("drain", resolve);
+                this.__channel!.once(
+                    "drain",
+                    resolve,
+                );
             });
         }
     }

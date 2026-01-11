@@ -1,12 +1,14 @@
 FROM node:24.12-alpine
 
+RUN corepack enable && corepack prepare pnpm@10.28.0 --activate
+
 WORKDIR app
 
-COPY package*.json .
-RUN npm ci
+COPY package.json pnpm-lock.yaml .
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN npm run build
+RUN pnpm build
 
 EXPOSE 3000
 

@@ -2,13 +2,23 @@ import Message from "#app/domain/message.js";
 
 export function createListOfQueuesWithListOfRandomMessages(nOfQueues: number, nOfMessages: number): Message[][]
 {
-    return Array.from({ length: nOfQueues }, (_, queueIndex) =>
-    {
-        return Array.from({ length: nOfMessages }, (_, messageIndex) => new Message({
-            queueName: `Queue-${queueIndex}`,
-            content: `Message-${messageIndex}`,
-        }));
-    });
+    return Array.from(
+        {
+            length: nOfQueues,
+        },
+        (_, queueIndex) =>
+        {
+            return Array.from(
+                {
+                    length: nOfMessages,
+                },
+                (_, messageIndex) => new Message({
+                    queueName: `Queue-${queueIndex}`,
+                    content: `Message-${messageIndex}`,
+                }),
+            );
+        },
+    );
 }
 
 type MessageFactoryOptions = {
@@ -60,5 +70,7 @@ export function createSubscribeRequest({
 
 export function createListOfSubscribeRequests(queues: string[])
 {
-    return queues.map((queueName) => createSubscribeRequest({ queueName }));
+    return queues.map((queueName) => createSubscribeRequest({
+        queueName,
+    }));
 }

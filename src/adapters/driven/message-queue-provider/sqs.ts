@@ -1,7 +1,13 @@
-import { DeleteMessageCommand, ReceiveMessageCommand, SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
+import {
+    DeleteMessageCommand, ReceiveMessageCommand, SendMessageCommand, SQSClient,
+} from "@aws-sdk/client-sqs";
+import {
+    MessageQueueProvider,
+} from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
-import { getLogger } from "#app/app-logger.js";
+import {
+    getLogger,
+} from "#app/app-logger.js";
 
 const logger = getLogger("SqsProvider");
 
@@ -39,7 +45,9 @@ implements MessageQueueProvider
             QueueUrl: this.__queueUrl,
             MaxNumberOfMessages: 10,
             WaitTimeSeconds: 20,
-            MessageAttributeNames: ["All"],
+            MessageAttributeNames: [
+                "All",
+            ],
         });
 
         const response = await this.__client!.send(command);

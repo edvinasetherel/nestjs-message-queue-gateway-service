@@ -1,12 +1,17 @@
-import { Logger } from "#app/ports/driven/logger.js";
-import { ConsoleLogger } from "#adapters/driven/logger/console.js";
+import {
+    Logger,
+} from "#app/ports/driven/logger.js";
+import {
+    ConsoleLogger,
+} from "#adapters/driven/logger/console.js";
 
 class AppLogger
 {
     private static instance: AppLogger | null = null;
     private loggerProvider: Logger | null = null;
 
-    private constructor() {}
+    private constructor()
+    {}
 
     static getInstance(): AppLogger
     {
@@ -26,7 +31,10 @@ class AppLogger
     {
         if (!this.loggerProvider)
         {
-            return new ConsoleLogger(context, ConsoleLogger.getLogLevel());
+            return new ConsoleLogger(
+                context,
+                ConsoleLogger.getLogLevel(),
+            );
         }
         return this.createContextLogger(context);
     }
@@ -36,10 +44,23 @@ class AppLogger
         const baseLogger = this.loggerProvider!;
 
         return {
-            debug: (message: string) => baseLogger.debug(message, context),
-            info: (message: string) => baseLogger.info(message, context),
-            warn: (message: string) => baseLogger.warn(message, context),
-            error: (message: string, error?: unknown) => baseLogger.error(message, error, context),
+            debug: (message: string) => baseLogger.debug(
+                message,
+                context,
+            ),
+            info: (message: string) => baseLogger.info(
+                message,
+                context,
+            ),
+            warn: (message: string) => baseLogger.warn(
+                message,
+                context,
+            ),
+            error: (message: string, error?: unknown) => baseLogger.error(
+                message,
+                error,
+                context,
+            ),
         };
     }
 }

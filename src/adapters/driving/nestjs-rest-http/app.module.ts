@@ -1,9 +1,19 @@
-import { DynamicModule, Module } from "@nestjs/common";
-import { PublisherService } from "#app/services/publisher.service.js";
+import {
+    DynamicModule, Module,
+} from "@nestjs/common";
+import {
+    PublisherService,
+} from "#app/services/publisher.service.js";
 
-import { AppController } from "#adapters/driving/nestjs-rest-http/app.controller.js";
-import { Dependencies } from "#adapters/startup/configurator.js";
-import { SubscriberService } from "#app/services/subscriber.service.js";
+import {
+    AppController,
+} from "#adapters/driving/nestjs-rest-http/app.controller.js";
+import {
+    Dependencies,
+} from "#adapters/startup/configurator.js";
+import {
+    SubscriberService,
+} from "#app/services/subscriber.service.js";
 
 @Module({})
 export class AppModule
@@ -15,7 +25,9 @@ export class AppModule
     {
         return {
             module: AppModule,
-            controllers: [AppController],
+            controllers: [
+                AppController,
+            ],
             providers: [
                 {
                     provide: PublisherService,

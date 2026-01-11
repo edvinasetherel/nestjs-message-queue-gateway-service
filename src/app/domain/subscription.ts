@@ -1,4 +1,6 @@
-import { assert_string } from "#utils/assertion.js";
+import {
+    assert_string,
+} from "#utils/assertion.js";
 
 export default class Subscription
 {
@@ -7,7 +9,13 @@ export default class Subscription
         queueName,
     })
     {
-        assert_string(queueName, "queueName must be a non-empty string", { minLength: 1 });
+        assert_string(
+            queueName,
+            "queueName must be a non-empty string",
+            {
+                minLength: 1,
+            },
+        );
         this.queueName = queueName;
     }
 }

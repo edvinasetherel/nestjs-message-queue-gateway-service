@@ -8,11 +8,15 @@ import {
     Logger, NotFoundException,
     Post,
 } from "@nestjs/common";
-import { PublisherService } from "#app/services/publisher.service.js";
+import {
+    PublisherService,
+} from "#app/services/publisher.service.js";
 import Message from "#app/domain/message.js";
 import type MessageDto from "#adapters/driving/nestjs-rest-http/messsage.dto.js";
 import UnrecognizedQueueError from "#app/unrecognized-queue-error.js";
-import { SubscriberService } from "#app/services/subscriber.service.js";
+import {
+    SubscriberService,
+} from "#app/services/subscriber.service.js";
 import type SubscribeDto from "#adapters/driving/nestjs-rest-http/subscribe.dto.js";
 import Subscription from "#app/domain/subscription.js";
 import AlreadySubscribedError from "#app/services/already-subscribed-error.js";
@@ -28,7 +32,8 @@ export class AppController
     constructor(
         private readonly messagingQueueService: PublisherService,
         private readonly subscriberService: SubscriberService,
-    ) {}
+    )
+    {}
 
     @Post(POST_MESSAGE_ENDPOINT_PATH)
     @HttpCode(HttpStatus.ACCEPTED)
@@ -50,7 +55,10 @@ export class AppController
 
         try
         {
-            await this.messagingQueueService.publish(message.content, message.queueName);
+            await this.messagingQueueService.publish(
+                message.content,
+                message.queueName,
+            );
         }
         catch (err)
         {
@@ -84,10 +92,13 @@ export class AppController
         try
         {
             console.log(`Subscribing to queue: ${subscription.queueName}`);
-            await this.subscriberService.subscribe(subscription.queueName, async (message) =>
-            {
-                logger.log(`[${subscribeDto.queueName}] Received message: ${message}`);
-            });
+            await this.subscriberService.subscribe(
+                subscription.queueName,
+                async (message) =>
+                {
+                    logger.log(`[${subscribeDto.queueName}] Received message: ${message}`);
+                },
+            );
         }
         catch (e)
         {

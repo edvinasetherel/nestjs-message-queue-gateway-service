@@ -1,5 +1,9 @@
-import { Result } from "#utils/result.js";
-import { getEnumProperty, getRequiredStringProperty } from "#adapters/startup/properties/utils.js";
+import {
+    Result,
+} from "#utils/result.js";
+import {
+    getEnumProperty, getRequiredStringProperty,
+} from "#adapters/startup/properties/utils.js";
 import PropertyValidationError from "#adapters/startup/properties/error.js";
 
 export interface RabbitMqProperties
@@ -41,9 +45,18 @@ function retrieveSqsProperties(properties: NodeJS.Dict<string>): SqsProperties |
     const endpointPropertyName = "MESSAGE_QUEUE_SQS_ENDPOINT";
     const regionPropertyName = "MESSAGE_QUEUE_SQS_REGION";
     const queueNamesPropertyName = "MESSAGE_QUEUE_SQS_QUEUES";
-    const endpoint = getRequiredStringProperty(endpointPropertyName, properties);
-    const region = getRequiredStringProperty(regionPropertyName, properties);
-    const queueNames = getRequiredStringProperty(queueNamesPropertyName, properties);
+    const endpoint = getRequiredStringProperty(
+        endpointPropertyName,
+        properties,
+    );
+    const region = getRequiredStringProperty(
+        regionPropertyName,
+        properties,
+    );
+    const queueNames = getRequiredStringProperty(
+        queueNamesPropertyName,
+        properties,
+    );
 
     const queueNamesArray = queueNames.split(",").map((queueName) => queueName.trim())
         .filter((queueName) => queueName);
@@ -64,8 +77,14 @@ function retrieveRabbitMqProperties(properties: NodeJS.Dict<string>): RabbitMqPr
 {
     const urlPropertyName = "MESSAGE_QUEUE_RABBITMQ_URL";
     const queueNamesPropertyName = "MESSAGE_QUEUE_RABBITMQ_QUEUES";
-    const url = getRequiredStringProperty(urlPropertyName, properties);
-    const queueNames = getRequiredStringProperty(queueNamesPropertyName, properties);
+    const url = getRequiredStringProperty(
+        urlPropertyName,
+        properties,
+    );
+    const queueNames = getRequiredStringProperty(
+        queueNamesPropertyName,
+        properties,
+    );
     const queueNamesArray = queueNames.split(",").map((queueName) => queueName.trim())
         .filter((queueName) => queueName);
     if (queueNamesArray.length === 0)
@@ -81,11 +100,28 @@ function retrieveRabbitMqProperties(properties: NodeJS.Dict<string>): RabbitMqPr
 
 function getMessageQueueProperties(properties: NodeJS.Dict<string>): MessageQueueProperties
 {
-    const isRabbitMqActive = getEnumProperty("MESSAGE_QUEUE_RABBITMQ_ACTIVE", properties, ["1", "0"]) === "1";
+    const isRabbitMqActive = getEnumProperty(
+        "MESSAGE_QUEUE_RABBITMQ_ACTIVE",
+        properties,
+        [
+            "1",
+            "0",
+        ],
+    ) === "1";
     const rabbitMqProperties = (isRabbitMqActive && retrieveRabbitMqProperties(properties)) || null;
-    const isSqsActive = getEnumProperty("MESSAGE_QUEUE_SQS_ACTIVE", properties, ["1", "0"]) === "1";
+    const isSqsActive = getEnumProperty(
+        "MESSAGE_QUEUE_SQS_ACTIVE",
+        properties,
+        [
+            "1",
+            "0",
+        ],
+    ) === "1";
     const sqsProperties = (isSqsActive && retrieveSqsProperties(properties)) || null;
-    const providers = [rabbitMqProperties, sqsProperties].filter((provider) => provider !== null);
+    const providers = [
+        rabbitMqProperties,
+        sqsProperties,
+    ].filter((provider) => provider !== null);
     return {
         providers: providers,
     };
@@ -93,8 +129,14 @@ function getMessageQueueProperties(properties: NodeJS.Dict<string>): MessageQueu
 
 function getAwsCredentials(properties: NodeJS.Dict<string>): AwsCredentials
 {
-    const accessKeyId = getRequiredStringProperty("AWS_ACCESS_KEY_ID", properties);
-    const secretAccessKey = getRequiredStringProperty("AWS_SECRET_ACCESS_KEY", properties);
+    const accessKeyId = getRequiredStringProperty(
+        "AWS_ACCESS_KEY_ID",
+        properties,
+    );
+    const secretAccessKey = getRequiredStringProperty(
+        "AWS_SECRET_ACCESS_KEY",
+        properties,
+    );
     return {
         accessKeyId,
         secretAccessKey,
@@ -106,8 +148,14 @@ export function retrieveProperties(properties: NodeJS.Dict<string>): Result<AppP
     try
     {
         return Result.success({
-            host: getRequiredStringProperty("HOST", properties),
-            hostPort: getRequiredStringProperty("HOST_PORT", properties),
+            host: getRequiredStringProperty(
+                "HOST",
+                properties,
+            ),
+            hostPort: getRequiredStringProperty(
+                "HOST_PORT",
+                properties,
+            ),
             messageQueue: getMessageQueueProperties(properties),
             awsCredentials: getAwsCredentials(properties),
         });

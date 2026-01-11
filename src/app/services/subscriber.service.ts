@@ -1,4 +1,6 @@
-import { CompositeMessageQueueGateway } from "#app/composite-message-queue-gateway.js";
+import {
+    CompositeMessageQueueGateway,
+} from "#app/composite-message-queue-gateway.js";
 import AlreadySubscribedError from "#app/services/already-subscribed-error.js";
 
 export class SubscriberService
@@ -22,7 +24,10 @@ export class SubscriberService
 
         try
         {
-            await this.gateway.subscribe(queueName, handler);
+            await this.gateway.subscribe(
+                queueName,
+                handler,
+            );
             this.activeSubscriptions.add(queueName);
         }
         finally

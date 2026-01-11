@@ -1,4 +1,6 @@
-import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
+import {
+    MessageQueueProvider,
+} from "#app/ports/driven/message-queue-provider.js";
 import UnrecognizedQueueError from "#app/unrecognized-queue-error.js";
 
 export class CompositeMessageQueueGateway
@@ -13,7 +15,10 @@ export class CompositeMessageQueueGateway
         {
             if (!this.__providersByQueue.has(provider.queueName))
             {
-                this.__providersByQueue.set(provider.queueName, []);
+                this.__providersByQueue.set(
+                    provider.queueName,
+                    [],
+                );
             }
             this.__providersByQueue.get(provider.queueName)!.push(provider);
         });

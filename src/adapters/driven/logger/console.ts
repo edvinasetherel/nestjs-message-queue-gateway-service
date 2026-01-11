@@ -1,4 +1,6 @@
-import { Logger, LogLevel } from "#app/ports/driven/logger.js";
+import {
+    Logger, LogLevel,
+} from "#app/ports/driven/logger.js";
 
 export class ConsoleLogger
 implements Logger
@@ -41,7 +43,10 @@ implements Logger
     {
         if (this.minLevel <= LogLevel.ERROR)
         {
-            console.error(`[ERROR] [${context || this.context}] ${message}`, error || "");
+            console.error(
+                `[ERROR] [${context || this.context}] ${message}`,
+                error || "",
+            );
         }
     }
 

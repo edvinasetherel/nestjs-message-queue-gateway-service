@@ -1,4 +1,6 @@
-import { MessageQueueProvider } from "#app/ports/driven/message-queue-provider.js";
+import {
+    MessageQueueProvider,
+} from "#app/ports/driven/message-queue-provider.js";
 import ProviderError from "#adapters/driven/message-queue-provider/error.js";
 
 export default class InMemoryMessageQueueProvider

@@ -1,6 +1,12 @@
-import { defineConfig } from "vitest/config";
-import { fileURLToPath } from "node:url";
-import { URL } from "url";
+import {
+    defineConfig,
+} from "vitest/config";
+import {
+    fileURLToPath,
+} from "node:url";
+import {
+    URL,
+} from "url";
 
 export default defineConfig({
     test: {
@@ -10,10 +16,22 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            "#app": fileURLToPath(new URL("./src/app", import.meta.url)),
-            "#tests": fileURLToPath(new URL("./tests", import.meta.url)),
-            "#adapters": fileURLToPath(new URL("./src/adapters", import.meta.url)),
-            "#utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
+            "#app": fileURLToPath(new URL(
+                "./src/app",
+                import.meta.url,
+            )),
+            "#tests": fileURLToPath(new URL(
+                "./tests",
+                import.meta.url,
+            )),
+            "#adapters": fileURLToPath(new URL(
+                "./src/adapters",
+                import.meta.url,
+            )),
+            "#utils": fileURLToPath(new URL(
+                "./src/utils",
+                import.meta.url,
+            )),
         },
     },
 });

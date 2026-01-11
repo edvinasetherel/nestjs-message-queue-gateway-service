@@ -8,12 +8,18 @@ export class Result<T>
 
     static success<T>(value: T): Result<T>
     {
-        return new Result(value, null);
+        return new Result(
+            value,
+            null,
+        );
     }
 
     static failure<T>(error: unknown): Result<T>
     {
-        return new Result(null as T, error);
+        return new Result(
+            null as T,
+            error,
+        );
     }
 
     get isSuccess(): boolean
